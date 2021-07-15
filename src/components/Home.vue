@@ -8,9 +8,10 @@
         <button style="margin: auto, margin-bottom: 3em" @click="searchCity()">Search</button>
       </center>
     </div>
-    <div v-for="c in city" :key="c.id">
+    <div>
         <h5>
-            {{c.place_name}}
+            <!-- {{city.place_name}} -->
+            {{coordinates[0]}} - {{coordinates[1]}}
         </h5>
     </div>
   </div>
@@ -26,6 +27,7 @@
         search: '',
         title: 'Your Weather',
         forecast: [],
+        coordinates: [],
         city: ''
       }       
     },
@@ -37,8 +39,15 @@
         .then(function(data) {
         //   console.log(data.body.features[0].place_name)
           console.log(data.body)
+          this.coordinates = data.body.features[0].bbox
 
-          this.city = data.body.features
+          this.$http.get('https://api.openweathermap.org/data/2.5/onecall?lat='+this.coordinates[1]+'&lon='+this.coordinates[0]+'&units=metric&exclude=hourly&appid=70f68a6a3d3e4804ac259ff1dd123f66')
+            .then(function(data) {
+            //   console.log(data.body.features[0].place_name)
+            this.forecast = data.body.daily.slice(0, 3)
+            console.log(this.forecast)
+            
+            })
         })
        },
       
