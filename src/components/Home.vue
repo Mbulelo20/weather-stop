@@ -5,8 +5,13 @@
         <input type="text" ref="searchInput" v-model="search" style="width:330px; margin: auto"/>
       </center>
       <center>
-        <md-button style="margin: auto, margin-bottom: 3em" @click="searchMovie()">Search</md-button>
+        <button style="margin: auto, margin-bottom: 3em" @click="searchCity()">Search</button>
       </center>
+    </div>
+    <div v-for="c in city" :key="c.id">
+        <h5>
+            {{c.place_name}}
+        </h5>
     </div>
   </div>
 </template>
@@ -21,27 +26,26 @@
         search: '',
         title: 'Your Weather',
         forecast: [],
+        city: ''
       }       
     },
     methods: {
-        searchWeather: function() {
-          this.search = this.$refs.searchInput.value;
-          // console.log("Search: "+this.search)
-          this.$http.get('https://api.themoviedb.org/3/search/movie?api_key=9270421e43cc32ed6056cad8de3c2c67&query=' + this.search ).then(function(data) {
-          // console.log("Results: " + data.body)
-            this.forecast = data.body.results
-          })
+        searchCity: function() {
+          this.city = this.$refs.searchInput.value;
+            console.log("Search: "+this.city)
+        this.$http.get('https://api.mapbox.com/geocoding/v5/mapbox.places/'+this.city+'.json?access_token=pk.eyJ1IjoibWJ1bGVsbyIsImEiOiJja25rN2pxbGIwOGR3MnZvMHZhbm04c3dlIn0.D1L9umIswRGLIgDh0BpSYg')
+        .then(function(data) {
+        //   console.log(data.body.features[0].place_name)
+          console.log(data.body)
+
+          this.city = data.body.features
+        })
        },
       
     }, 
     created() {
     
-        this.$http.get('https://api.themoviedb.org/3/movie/popular?api_key=9270421e43cc32ed6056cad8de3c2c67&language=en-US&page='+this.$store.state.currentPage)
-        .then(function(data) {
-          console.log(data.body.results)
-          this.movies = data.body.results
-          this.poster = 'https://image.tmdb.org/t/p/w500/'+data.body.results.poster_path
-        })
+        
     }, 
     
   }
